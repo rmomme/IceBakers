@@ -157,7 +157,21 @@ document.getElementById("orderForm").addEventListener("submit",async e=>{
  const btn=document.getElementById("send");btn.disabled=true;btn.textContent="Sender…";
  const items=selected(), f=freezer(), iceTotal=items.reduce((s,p)=>s+p.line,0), total=iceTotal+f.price;
  const orderText=items.map(p=>`${p.sku} – ${p.name}: ${p.qty} stk. x ${money(p.price)} = ${money(p.line)}`).join("\n");
- const params={
+
+  const orderTable = items.map(p => `
+<tr>
+  <td style="padding:8px 4px;">${p.sku}</td>
+  <td style="padding:8px 4px;">${escapeHtml(p.name)}</td>
+  <td style="padding:8px 4px;text-align:right;">${p.qty}</td>
+  <td style="padding:8px 4px;text-align:right;">${money(p.price)}</td>
+  <td style="padding:8px 4px;text-align:right;">${money(p.line)}</td>
+</tr>
+`).join("");
+  
+  const params={
+    order_table: orderTable,
+vat: money(total / 5),
+total_qty: items.reduce((s,p) => s+p.qty, 0),
    to_email:RECIPIENT,
    customer_type:type.value,
    address:document.getElementById('address').value,
